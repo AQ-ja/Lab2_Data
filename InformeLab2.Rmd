@@ -1,0 +1,76 @@
+---
+title: "ReporteLab2"
+output: html_document
+date: '2022-08-02'
+authors: "Daniela Batz | Alfredo Quezada"
+---
+
+```{r setup, include=FALSE}
+
+library("readxl")
+data_impor <- read_excel("Importacion.xlsx")
+data_consumo <- read_excel("Consumo.xlsx")
+
+
+```
+
+## Analisis exploratorio de Importaciones 
+
+Para las importaciones se tienen los siguientes datos:
+
+```{r }
+data_impor
+```
+
+de los mismos se pueden obtener lo siguente: 
+
+```{r}
+hist(x = data_impor$Superior)
+```
+
+
+
+```{r}
+hist(x = data_impor$Regular)
+```
+
+
+
+```{r}
+hist(x = data_impor$Diesel)
+```
+
+
+
+```{r}
+plot(data_impor$Fecha, data_impor$Total_Importación)
+```
+
+
+```{r include=FALSE}
+t1_c <- table(data_impor$Superior, data_impor$Diesel)
+```
+
+
+```{r}
+pie(t1_c)
+```
+
+
+
+
+
+
+
+
+
+
+## Consumo 
+
+Para el consumo se tienen los siguientes datos:
+```{r }
+data_consumo
+```
+
+
+
