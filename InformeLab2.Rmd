@@ -31,6 +31,24 @@ diesel<-data_impor[order(-data_impor$Diesel),]
 dies<- head(diesel, 10)
 dies<-dies[,1:2]
 
+# Mes con el cual se tiene menor importacion de Gasolina
+gas1<-data_impor[order(data_impor$Superior),]
+menossuper<- head(gas1,10)
+menossuper<-menossuper[,1:2]
+
+
+
+#Mes en el cual se tiene menor importacion de Regular 
+reg1<-data_impor[order(data_impor$Regular),]
+menosregu<- head(reg1,10)
+menosregu<-menosregu[,1:2]
+
+
+#Mes en el que se tiene menor importacion de Disel 
+diesel1<-data_impor[order(data_impor$Diesel),]
+menosdies<- head(diesel1, 10)
+menosdies<-menosdies[,1:2]
+
 
 
 
@@ -38,10 +56,27 @@ def<-data.frame(Tipo=c("Gasolina","Regular","Diesel"), Media=c(mean(data_impor$S
 
 grafdef<-ggplot(data=def, aes(x=Tipo, y=Media, fill=Tipo)) +
   geom_bar(stat="identity", position=position_dodge())+
-  geom_text(aes(label=as.integer(Media)), vjust=1.6, color="blue",
+  geom_text(aes(label=as.integer(Media)), vjust=1.6, color="black",
             position = position_dodge(0.9), size=3.5)+
   labs(title="Promedio de importaciones por tipo de gasolina", y="Promedio")+
   theme(legend.position="none")
+
+
+grafsup<-ggplot(data_impor, aes(x = format(`Fecha`, format='%Y'), y = `Superior`, fill =format(`Fecha`, format='%Y') )) +
+  geom_bar(stat = "identity",position=position_dodge())+labs(title="Importaciones por año de combustible Superior", y="Importacion" , x='Año')+
+  theme(legend.position="none")
+
+
+grafreg<-ggplot(data_impor, aes(x = format(`Fecha`, format='%Y'), y = `Regular`, fill =format(`Fecha`, format='%Y') )) +
+  geom_bar(stat = "identity",position=position_dodge())+labs(title="Importaciones por año de combustible Regular", y="Importacion" , x='Año')+
+  theme(legend.position="none")
+
+
+grafdie<-ggplot(data_impor, aes(x = format(`Fecha`, format='%Y'), y = `Diesel`, fill =format(`Fecha`, format='%Y') )) +
+  geom_bar(stat = "identity",position=position_dodge())+labs(title="Importaciones por año de combustible Diesel", y="Importacion" , x='Año')+
+  theme(legend.position="none")
+
+
 
 
 ```
@@ -99,11 +134,61 @@ dies
 ```
 
 
-Ahora si queremos ver, la cantidad 
+Asi mismo podemos ver cuales fueron las fechas en las que se observa una cantidad menor de importacion de cada uno de los tipos de combustible.
+
+```{r}
+menossuper
+```
+
+Para el combustible regular: 
+
+```{r}
+menosregu
+```
+
+Para el combustible diesel: 
+```{r}
+menosdies
+```
+
+
+Graficas:
 
 ```{r}
 grafdef
 ```
+
+
+Como se observa en la grafica se puede ver que la gasolina Diesel ha sido la que mayor importaciones ha tenido en promedio, lo cual es de cierta forma algo logico, debido a que este combustible juega un papel importante en el transporte publico y pesado, sin tomar en cuenta la gran cantidad de vehiculos y maquinas que se manejan con ese combustible. 
+
+
+```{r}
+grafsup
+```
+
+
+Y basados en la grafica anterior, podemos ver que el año 2021 fue el año con que el combustible super cuenta con mayor cantidad de importacion reportada. 
+
+
+```{r}
+grafreg
+```
+
+
+Como podemos ver, el año 2022 es el cual se lleva reportado una mayor cantidad de combustible Regular, lo cual de cierta forma podemos decir que es equivalente a lo que se vio, debido al alza de los precios, el combustible Superior presentaba un valor mas caro que el Regular, por lo que la poblacion empezo a optar por esa opcion.
+
+
+```{r}
+grafdie
+```
+
+
+El 2018 fue el año que mayor cantidad de importaciones se han registrado. 
+
+
+
+
+
 
 
 
