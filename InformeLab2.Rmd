@@ -8,8 +8,40 @@ authors: "Daniela Batz | Alfredo Quezada"
 ```{r setup, include=FALSE}
 
 library("readxl")
+library(ggplot2)
+
 data_impor <- read_excel("Importacion.xlsx")
 data_consumo <- read_excel("Consumo.xlsx")
+
+# Mes con el cual se tiene mayor importacion de Gasolina
+gas<-data_impor[order(-data_impor$Superior),]
+super<- head(gas,10)
+super<-super[,1:2]
+
+
+
+#Mes en el cual se tiene mayor importacion de Regular 
+reg<-data_impor[order(-data_impor$Regular),]
+regu<- head(reg,10)
+regu<-regu[,1:2]
+
+
+#Mes en el que se tiene mayor importacion de Disel 
+diesel<-data_impor[order(-data_impor$Diesel),]
+dies<- head(diesel, 10)
+dies<-dies[,1:2]
+
+
+
+
+def<-data.frame(Tipo=c("Gasolina","Regular","Diesel"), Media=c(mean(data_impor$Superior), mean(data_impor$Regular), mean(data_impor$Diesel)))
+
+grafdef<-ggplot(data=def, aes(x=Tipo, y=Media, fill=Tipo)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  geom_text(aes(label=as.integer(Media)), vjust=1.6, color="blue",
+            position = position_dodge(0.9), size=3.5)+
+  labs(title="Promedio de importaciones por tipo de gasolina", y="Promedio")+
+  theme(legend.position="none")
 
 
 ```
@@ -47,18 +79,31 @@ plot(data_impor$Fecha, data_impor$Total_Importación)
 ```
 
 
-```{r include=FALSE}
-t1_c <- table(data_impor$Superior, data_impor$Diesel)
-```
+Ahora, explorando aun mas los datos, podemos ver cuales han sido las fechas en las que se encuentra una mayor importacion por cada uno de los tipos de combustible. 
 
+Para el combustible superior: 
 
 ```{r}
-pie(t1_c)
+super
+```
+
+Para el combustible regular: 
+
+```{r}
+regu
+```
+
+Para el combustible diesel: 
+```{r}
+dies
 ```
 
 
+Ahora si queremos ver, la cantidad 
 
-
+```{r}
+grafdef
+```
 
 
 
