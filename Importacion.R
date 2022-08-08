@@ -72,6 +72,7 @@ library(forecast)
 library(tseries)
 library(fUnitRoots)
 library(ggfortify)
+library("readxl")
 
 impor <- read_excel("Importacion.xlsx")
 
@@ -82,16 +83,97 @@ diesel<-impor[c('Fecha','Diesel')]
 # Para el combustible Superior 
 super_ts <- ts( super$`Superior`, start = c(2001,1),frequency = 12)
 
+# Inicio de la serie
 start(super_ts)
+#Final de la serie
 end(super_ts)
+#Frecuencia de la serie 
 frequency(super_ts)
-plot(super_ts)
 
+#Resultado en forma de grafica. 
+plot(super_ts)
 abline(reg=lm(super_ts~time(super_ts)), col=c("red"))
+
+#Grafica para ver la estacionalidad 
 plot(aggregate(super_ts,FUN=mean))
 dec.Super<-decompose(super_ts)
 plot(dec.Super)
-plot(dec.Super$seasonal)
+
+
+####### Pasamos a ver la estimacion 
+train <- head(super_ts, round(length(super_ts) * 0.7))
+h <- length(super_ts) - length(train)
+test <- tail(super_ts, h)
+
+# se le aplica una transformacion logistica 
+Superlog<-log(train)
+plot(descompose(train))
+plot(train)
+
+
+#raices unitarias 
+adfTest(train)
+unitrootTest(train)
+
+#Aplicando diferenciacion 
+adfTest(diff(train))
+unitrootTest(diff(train))
+
+
+
+#grafico de autocorrelacion
+acf(Superlog, 50)
+#para una correlacion parcial 
+pacf(Superlog, 50)
+
+#Comprobar estacionalidad 
+traines <- decompose(train)
+plot(traines$seasonal)
+
+
+#Para hacer el modelo ARIMA
+fitArima<-arima(Superlog, order = c(1,2,2), seasonal =c(1,1,0))
+fautoarima<-auto.arima(train)
+
+
+#####PREDICCION 
+auto.arima(super_ts)
+fit <- arima(log(super_ts), c(0,1,1),seasonal = list(order = c(0,1,1), period = 12))
+predi<-predict(fit, n.ahead = 3)
+ts.plot(super_ts,2.718^pred$pred, log = "y", lty = c(1,3))
+fit2 <- arima(log(super_ts), c(2, 1, 1),seasonal = list(order = c(0, 1, 0), period = 12))
+forecastAP <- forecast(fit2, level = c(95), h = 3)
+autoplot(forecastAP)
+
+
+
+### Prohet 
+library(prophet)
+library(zoo)
+
+df<-data.frame(ds=as.Date(as.yearmon(time(train))),y=as.matrix(train))
+testdf<-data.frame(ds=as.Date(as.yearmon(time(test))),y=as.matrix(test) )
+head(df)
+fitProphet<-prophet(df,yearly.seasonality = T,weekly.seasonality = T)
+future <- make_future_dataframe(fitProphet,periods = h,freq = "month", include_history = T)
+p <- predict(fitProphet,future)
+p<-p[,c("ds","yhat","yhat_lower","yhat_upper")]
+plot(fitProphet,p)
+pred<-tail(p,h)
+pred$y<-testdf$y
+
+ggplot(pred, aes(x=ds, y=yhat)) +
+  geom_line(size=1, alpha=0.8) +
+  geom_ribbon(aes(ymin=yhat_lower, ymax=yhat_upper), fill="blue", alpha=0.2) +
+  geom_line(data=pred, aes(x=ds, y=y),color="red")
+
+
+
+
+
+
+
+
 
 
 #Para el combustible Regular 
