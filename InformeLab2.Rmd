@@ -676,25 +676,113 @@ autoplot(forecastAP)
 Por ultimo, podemos ver que el combustible Diesel al igual que los demas combustibles, ha tenido altibajos, pero si cabe recalcar que en comparacion a los otros combustibles, la disminucion que tuvo durante a la pandemia fue mucho menor, lo cual es logico, porque aunque la movilidad estuviera restringida, lo que es el transporte pesado nunca paro, por lo cual tiene sentido que la demanda de diesel haya sido mucho mayor que sus dos competidores, asi como tambiem podemos ver, que segun nuestra prediccion, el diesel ira al alza, cosa que tambien es logico, debido a lo antes mencionado de su alta demanda y sin contar que el precio de este es mucho menor. 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Consumo 
+```{r}
+# Mes con el cual se tiene mayor consumo de Gasolina
+gas<-data_consumo[order(-data_consumo$`Gasolina superior`),]
+super<- head(gas,10)
+super<-super[,1:2]
+#Mes en el cual se tiene mayor consumo de Regular 
+reg<-data_consumo[order(-data_consumo$`Gasolina regular`),]
+regu<- head(reg,10)
+regu<-regu[,1:2]
+#Mes en el que se tiene mayor consumo de Diesel 
+diesel<-data_consumo[order(-data_consumo$Diesel),]
+dies<- head(diesel, 10)
+dies<-dies[,1:2]
+# Mes con el cual se tiene menor consumo de Gasolina
+gas1<-data_consumo[order(data_consumo$`Gasolina regular`),]
+menossuper<- head(gas1,10)
+menossuper<-menossuper[,1:2]
+#Mes en el cual se tiene menor consumo de Regular 
+reg1<-data_consumo[order(data_consumo$`Gasolina regular`),]
+menosregu_c<- head(reg1,10)
+menosregu_c<-menosregu[,1:2]
+#Mes en el que se tiene menor importacion de Diesel 
+diesel1<-data_consumo[order(data_consumo$Diesel),]
+menosdies<- head(diesel1, 10)
+menosdies<-menosdies[,1:2]
+def<-data.frame(Tipo=c("Gasolina","Regular","Diesel"), Media=c(mean(data_consumo$`Gasolina superior`), mean(data_consumo$`Gasolina regular`), mean(data_consumo$Diesel)))
+grafdef_c<-ggplot(data=def, aes(x=Tipo, y=Media, fill=Tipo)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  geom_text(aes(label=as.integer(Media)), vjust=1.6, color="black",
+            position = position_dodge(0.9), size=3.5)+
+  labs(title="Promedio de consumo por tipo de gasolina", y="Promedio")+
+  theme(legend.position="none")
+grafsup_c<-ggplot(data_consumo, aes(x = format(`Fecha`, format='%Y'), y = `Gasolina superior`, fill =format(`Fecha`, format='%Y') )) +
+  geom_bar(stat = "identity",position=position_dodge())+labs(title="Consumo por año de combustible Superior", y="Consumo" , x='Año')+
+  theme(legend.position="none")
+grafreg_c<-ggplot(data_consumo, aes(x = format(`Fecha`, format='%Y'), y = `Gasolina regular`, fill =format(`Fecha`, format='%Y') )) +
+  geom_bar(stat = "identity",position=position_dodge())+labs(title="Consumo por año de combustible Regular", y="Consumo" , x='Año')+
+  theme(legend.position="none")
+grafdie_c<-ggplot(data_consumo, aes(x = format(`Fecha`, format='%Y'), y = `Diesel`, fill =format(`Fecha`, format='%Y') )) +
+  geom_bar(stat = "identity",position=position_dodge())+labs(title="Consumo por año de combustible Diesel", y="Consumo" , x='Año')+
+  theme(legend.position="none")
+```
 
-Para el consumo se tienen los siguientes datos:
+Para el data_consumo se tienen los siguientes datos:
 ```{r }
 data_consumo
 ```
 
+De los cuales se puede obtener lo siguiente:
+```{r}
+str(data_consumo)
+```
+Todas las variables tratadas en el dataset son variables cuantitativas, por lo se presentara el histograma de cada una de las variables.
 
+```{r}
+hist(x= data_consumo$`Gasolina superior`, main = paste("Histograma de Gasolina Superior"))
+hist(x= data_consumo$`Gasolina regular`, main = paste("Histograma de gasolina regular"))
+hist(x= data_consumo$Diesel, main = paste("Histograma de gasolina diesel"))
+plot(data_consumo$Fecha, data_consumo$`Total Consumo`, main = paste("Total de Consumo"))
+```
 
+A continuación se puede ver que cuales han sido las fehas en las que se encuentra un mayor consumo por cada uno de los tipos de gasolina
+
+Para el combustible superior:
+```{r}
+super
+```
+Para el combustible regular
+```{r}
+regu
+```
+Para el combustible diesel
+```{r}
+dies
+```
+
+Ademas se pueden ver cuales fueron las fechas en las que se obsvera una cantidad menor de cosumo de cada uno de los tipos de gasolina.
+
+```{r}
+menossuper
+```
+Para el combustible regular
+```{r}
+menosregu_c
+```
+
+Para el cumbistible de diesel
+```{r}
+menosdies
+```
+Graficas
+```{r}
+grafdef_c
+```
+Se puede observar que la gasolina Diesel se vio mas en el consumo.
+```{r}
+grafsup_c
+```
+Se puede observar que el año que demuestra mas consumo es entre los años 2020 y 2021.
+
+```{r}
+grafreg_c
+```
+Se observa que el año 2021 se ve afectado en el consumo de la gasolina regular.
+
+```{r}
+grafdie_c
+```
+Al igual en el combustible de Diesel el año que se vio afectado por el conusmo fue en el año 2021.
